@@ -1,11 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 int main() {
-    int status = system("sudo /bin/cat /etc/shadow");
-    if (status == -1) {
-        perror("system");
+    printf("Effective UID: %d\n", geteuid());
+    printf("Default UID: %d\n", getuid());
+
+    FILE *f = fopen("/etc/shadow", "r");
+    if (f == NULL) {
+        perror("fopen");
         return 1;
     }
+
+    char line[256];
+    while (fgets(line, sizeof(line), f)) {
+        printf("%s", line);
+    }
+
+    fclose(f);
     return 0;
 }
